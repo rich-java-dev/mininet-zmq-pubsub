@@ -10,9 +10,9 @@ port = "5555"
 proxy = sys.argv[1] if len(sys.argv) > 1 else "*"
 
 conn_str = f'tcp://{proxy}:{port}'
-print(f"Publisher pushing to {conn_str}")
+print(f'Publisher pushing to {conn_str}')
 
-socket.bind(conn_str)
+socket.connect(conn_str)
 
 
 while True:
