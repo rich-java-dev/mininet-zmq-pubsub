@@ -7,7 +7,7 @@ context = zmq.Context()
 socket = context.socket(zmq.PUB)
 
 port = "5555"
-proxy = sys.argv[1] if len(sys.argv) > 1 else "10.0.0.2"
+proxy = sys.argv[1] if len(sys.argv) > 1 else "*"
 
 conn_str = f'tcp://{proxy}:{port}'
 print(f"Publisher pushing to {conn_str}")
