@@ -1,12 +1,24 @@
-from datetime import datetime
-import time
 import zmq
+from random import randrange
+import time
+import sys
 
 context = zmq.Context()
-
 socket = context.socket(zmq.PUB)
-socket.bind("tcp://*:5050")
+
+port = "5555"
+proxy = sys.argv[1] if len(sys.argv) > 1 else "10.0.0.2"
+
+conn_str = f'tcp://{proxy}:{port}'
+print(f"Publisher pushing to {conn_str}")
+
+socket.bind(conn_str)
+
 
 while True:
-    socket.send_string(str(datetime.now()))
-    time.sleep(1)
+    zipcode = randrange(1, 100000)
+    temperature = randrange(-80, 135)
+    relhumidity = randrange(10, 60)
+
+    socket.send_string("%i %i %i" % (zipcode, temperature, relhumidity))
+    time.sleep(0.1)

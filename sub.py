@@ -6,12 +6,16 @@ context = zmq.Context()
 
 socket = context.socket(zmq.SUB)
 
-pub_server = sys.argv[1] if len(sys.argv) > 1 else "localhost"
-socket.connect("tcp://" + pub_server + ":5050")
+topic = sys.argv[2] if len(sys.argv) > 2 else ''
+proxy = sys.argv[1] if len(sys.argv) > 1 else "10.0.0.1"
 
-socket.setsockopt_string(zmq.SUBSCRIBE, '')
+port = "5556"
+socket.connect(f'tcp://{proxy}:{port}')
+socket.setsockopt_string(zmq.SUBSCRIBE, topic)
+
+print(f"Subscriber listening to '{proxy}' w/ topic '{topic}'")
 
 while True:
     msg = socket.recv_string()
     print(msg)
-    time.sleep(1)
+    time.sleep(0.1)
