@@ -22,19 +22,18 @@ print(prox_str)
 net.hosts[0].cmd(prox_str)
 
 # set up publishers
-
 pub_count = 4
 pub_range = 100000 / pub_count
 
 
-# pub.py <proxy_interface> <interface_port> <publisher_range_min> <publisher_range_max>
+# pub.py <proxy_interface> <interface_port (proxy subscrib port)> <publisher_range_min> <publisher_range_max>
 for i in range(0, pub_count):
     cmd_str = f'python3 {src_dir}/pub.py {x_intf} {xin} {int(i * pub_range)} {int(((i + 1) * pub_range)-1)} &'
     print(cmd_str)
     net.hosts[i].cmd(cmd_str)
 
 
-# sub.py <proxy_port
+# sub.py <proxy_interface> <interface_port (proxy publish port)> <topic>
 for i in range(pub_count + 1, host_count):
     topic = randrange(1, 100000)
     cmd_str = f'sudo python3 {src_dir}/sub.py {x_intf} {xout} {topic} &'
