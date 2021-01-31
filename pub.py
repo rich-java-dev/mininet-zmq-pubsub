@@ -2,24 +2,47 @@ import zmq
 from random import randrange
 import time
 import sys
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--interface", "--proxy", "--device", nargs="+", default="*")
+parser.add_argument("--port", default="5555")
+parser.add_argument("--topic_range", nargs="+")
+parser.add_argument("--bind", action="store_true", default=False)
+parser.add_argument("--connect", action="store_true", default=False)
+args = parser.parse_args()
+
+intf = args.interface
+port = args.port
+lower_bound = args.topic_range[0]
+upper_bound = args.topic_range[1]
+
+print(lower_bound)
+print(upper_bound)
+
+bind = args.bind
+connect = args.connect
 
 context = zmq.Context()
 socket = context.socket(zmq.PUB)
 
-proxy = sys.argv[1] if len(sys.argv) > 1 else "*"
-port = sys.argv[2] if len(sys.argv) > 2 else "5555"
-lower_bound = sys.argv[3] if len(sys.argv) > 3 else 0
-upper_bound = sys.argv[4] if len(sys.argv) > 4 else 100000
+conn_str = f'tcp://{intf}:{port}'
+print(
+    f'Publisher pushing to {conn_str} w/ topic range:[{lower_bound},{upper_bound}]')
 
-conn_str = f'tcp://{proxy}:{port}'
-print(f'Publisher pushing to {conn_str}')
+if bind:
+    print("binding")
+    socket.bind(conn_str)
 
-socket.connect(conn_str)
-
+if connect:
+    for interface in intf:
+        conn_str = f'tcp://{interface}:{port}'
+        print(f"connecting: {conn_str}")
+        socket.connect(conn_str)
 
 while True:
     zipcode = randrange(int(lower_bound), int(upper_bound))
     temperature = randrange(-80, 135)
     relhumidity = randrange(10, 60)
-
-    socket.send_string("%i %i %i" % (zipcode, temperature, relhumidity))
+    msg = "%i %i %i" % (zipcode, temperature, relhumidity)
+    socket.send_string(msg)
