@@ -4,26 +4,42 @@ from mininet.topo import SingleSwitchTopo
 import time
 from random import randrange
 
-net_topo = LinearTopo(k=20)
+host_count = 20
+
+net_topo = LinearTopo(k=host_count)
 
 net = Mininet(topo=net_topo)  # create a 10 host net
 net.start()
 
-src_dir = '/home/rw/projects/cs6381-assignment1'
+src_dir = '/home/rw/mininet/cs6381-assignment1'
+x_intf = "10.0.0.1"  # proxy interface
+xin = "5555"  # proxy input (pub connection)
+xout = "5556"  # proxy output (sub connection)
 
-# set up proxy/broker
-net.hosts[0].cmd(f'sudo python3 {src_dir}/broker.py &')
+# broker.py <proxy_input_port> <proxy_output_port>
+prox_str = f'python3 {src_dir}/broker.py {xin} {xout} &'
+print(prox_str)
+net.hosts[0].cmd(prox_str)
 
 # set up publishers
-net.hosts[1].cmd(f'sudo python3 {src_dir}/pub.py 10.0.0.1 5555 0 24999 &')
-net.hosts[2].cmd(f'sudo python3 {src_dir}/pub.py 10.0.0.1 5555 25000 49999 &')
-net.hosts[3].cmd(f'sudo python3 {src_dir}/pub.py 10.0.0.1 5555 50000 74999 &')
-net.hosts[3].cmd(f'sudo python3 {src_dir}/pub.py 10.0.0.1 5555 75000 100000 &')
 
-# set up subscribers
-for i in range(5, 20):
+pub_count = 4
+pub_range = 100000 / pub_count
+
+
+# pub.py <proxy_interface> <interface_port> <publisher_range_min> <publisher_range_max>
+for i in range(0, pub_count):
+    cmd_str = f'python3 {src_dir}/pub.py {x_intf} {xin} {int(i * pub_range)} {int(((i + 1) * pub_range)-1)} &'
+    print(cmd_str)
+    net.hosts[i].cmd(cmd_str)
+
+
+# sub.py <proxy_port
+for i in range(pub_count + 1, host_count):
     topic = randrange(1, 100000)
-    net.hosts[i].cmd(f'sudo python3 {src_dir}/sub.py 10.0.0.1 {topic} &')
+    cmd_str = f'sudo python3 {src_dir}/sub.py {x_intf} {xout} {topic} &'
+    print(cmd_str)
+    net.hosts[i].cmd(cmd_str)
 
 while(True):
     time.sleep(0.01)
