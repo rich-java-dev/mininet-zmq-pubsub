@@ -36,7 +36,7 @@ for i in range(0, pub_count):
 # sub.py <proxy_interface> <interface_port (proxy publish port)> <topic>
 for i in range(pub_count + 1, host_count):
     topic = randrange(1, 100000)
-    cmd_str = f'sudo python3 {src_dir}/sub.py {x_intf} {xout} {topic} &'
+    cmd_str = f'python3 {src_dir}/sub.py {x_intf} {xout} {topic} &'
     print(cmd_str)
     net.hosts[i].cmd(cmd_str)
 
