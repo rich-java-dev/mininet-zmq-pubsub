@@ -47,7 +47,6 @@ def subscriber(interface, port=5556, bind=False, connect=False, topic=''):
         socket.bind(conn_str)
 
     if connect:
-        print(type(interface))
         for intf in interface:
             conn_str = f'tcp://{intf}:{port}'
             print(f"connecting: {conn_str}")
