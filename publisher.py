@@ -1,7 +1,7 @@
 import sys
 from random import randrange
 import argparse
-from netutils import publisher
+from zutils import publisher
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--interface", "--proxy",
