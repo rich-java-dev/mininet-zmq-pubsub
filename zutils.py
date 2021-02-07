@@ -23,14 +23,39 @@ def proxy(in_bound=5555, out_bound=5556):
 
 def publisher(interface, port=5555, bind=True, connect=False, topic_min=0, topic_max=100000):
     conn_str = f'tcp://{interface}:{port}'
+
+    evt_map = {}
+    for val in dir(zmq):
+        if val.startswith('EVENT_'):
+            key = getattr(zmq, val)
+            print("%21s : %4i" % (val, key))
+            evt_map[key] = val
+
+    def evt_monitor(monitor):
+        while monitor.poll():
+            evt = recv_monitor_message(monitor)
+            evt.update({'description': evt_map[evt['event']]})
+            print("Event: {}".format(evt))
+            if evt['event'] == zmq.EVENT_MONITOR_STOPPED:
+                break
+        monitor.close()
+        print()
+        print('event monitor stopped.')
+
     socket = context.socket(zmq.PUB)
+    monitor = socket.get_monitor_socket()
+
+    t = threading.Thread(target=evt_monitor, args=(monitor,))
+    t.start()
 
     print(
         f'Publishing to {conn_str} w/ topic range:[{topic_min},{topic_max}]')
 
     if bind:
-        print("binding")
-        socket.bind(conn_str)
+        for intf in interface:
+            conn_str = f'tcp://{intf}:{port}'
+            print(f"binding: {conn_str}")
+            socket.bind(conn_str)
 
     if connect:
         for intf in interface:
@@ -38,12 +63,14 @@ def publisher(interface, port=5555, bind=True, connect=False, topic_min=0, topic
             print(f"connecting: {conn_str}")
             socket.connect(conn_str)
 
-    return lambda msg: socket.send_string(msg)
+    return lambda topic, msg: socket.send_string(f'{topic} {msg}')
 
 
 def subscriber(interface='', port=5556, topic='', net_size=0):
     conn_str = f'tcp://{interface}:{port}'
     socket = context.socket(zmq.SUB)
+
+    print(f"Subscribing to '{conn_str}' w/ topic '{topic}'")
 
     for intf in interface:
         conn_str = f'tcp://{intf}:{port}'
@@ -58,12 +85,10 @@ def subscriber(interface='', port=5556, topic='', net_size=0):
 
     socket.setsockopt_string(zmq.SUBSCRIBE, topic)
 
-    print(f"Subscribing to '{conn_str}' w/ topic '{topic}'")
-
     return lambda: socket.recv_string()
 
 
-def monitor(interface='', in_bound=5555, out_bound=5556, net_size=0):
+def monitor(interface='*', in_bound=5555, out_bound=5556, net_size=0):
     evt_map = {}
     for val in dir(zmq):
         if val.startswith('EVENT_'):
@@ -95,7 +120,5 @@ def monitor(interface='', in_bound=5555, out_bound=5556, net_size=0):
             print(conn_str)
             req.bind(conn_str)
             res.connect(conn_str)
-            time.sleep(10)
-            res.close()
 
     listen_for()

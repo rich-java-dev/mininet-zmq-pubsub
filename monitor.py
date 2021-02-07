@@ -1,17 +1,16 @@
-import sys
-import time
-import argparse
-from zutils import monitor
+import pyshark
 
-parser = argparse.ArgumentParser()
-parser.add_argument("--interface", "--proxy",
-                    "--device", nargs="+", default="*")
-parser.add_argument("--xin", "--in_bound", default="5555")
-parser.add_argument("--xout", "--out_bound", default="5556")
-args = parser.parse_args()
+capture = pyshark.LiveCapture(interface='s1-eth1')
 
-interface = args.interface
-xin = args.xin
-xout = args.xout
+for packet in capture.sniff_continuously(packet_count=50):
+    # print(packet)
+    ip = packet.ip
+    tcp = packet.tcp
 
-monitor(interface, xin, xout)
+    src = ip.src
+    dst = ip.dst
+    port = tcp.dstport
+    flags = tcp.flags
+    time_delta = tcp.time_delta
+    print(
+        f' source: {src} dest: {dst} port: {port} time_lapse(RTT):{time_delta} flags:{flags}')
