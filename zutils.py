@@ -86,39 +86,3 @@ def subscriber(interface='', port=5556, topic='', net_size=0):
     socket.setsockopt_string(zmq.SUBSCRIBE, topic)
 
     return lambda: socket.recv_string()
-
-
-def monitor(interface='*', in_bound=5555, out_bound=5556, net_size=0):
-    evt_map = {}
-    for val in dir(zmq):
-        if val.startswith('EVENT_'):
-            key = getattr(zmq, val)
-            print("%21s : %4i" % (val, key))
-            evt_map[key] = val
-
-    def evt_monitor(monitor):
-        while monitor.poll():
-            evt = recv_monitor_message(monitor)
-            evt.update({'description': evt_map[evt['event']]})
-            print("Event: {}".format(evt))
-            if evt['event'] == zmq.EVENT_MONITOR_STOPPED:
-                break
-        monitor.close()
-        print()
-        print('event monitor stopped.')
-
-    req = context.socket(zmq.REQ)
-    res = context.socket(zmq.REP)
-    monitor = req.get_monitor_socket()
-
-    t = threading.Thread(target=evt_monitor, args=(monitor,))
-    t.start()
-
-    def listen_for():
-        for intf in interface:
-            conn_str = f'tcp://{intf}:{in_bound}'
-            print(conn_str)
-            req.bind(conn_str)
-            res.connect(conn_str)
-
-    listen_for()
