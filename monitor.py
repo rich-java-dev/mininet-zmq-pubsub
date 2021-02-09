@@ -14,9 +14,9 @@ sample_size = args.sample_size
 net_size = int(args.net_size)
 
 
-def capture_and_plot(i):
-    intf = f"s1-eth{i+1}"
+def capture_and_plot(intf):
     print(f"begining live capture on {intf}")
+
     capture = pyshark.LiveCapture(interface=intf)
     packet_map = {}
     for packet in capture.sniff_continuously(packet_count=sample_size):
@@ -61,8 +61,11 @@ def capture_and_plot(i):
 # p = Pool(net_size)
 # with p:
 #     p.map(capture_and_plot, range(net_size))
-
-for i in range(net_size):
-    capture_and_plot(i)
+if net_size == 1:
+    capture_and_plot(intf)
+else:
+    for i in range(net_size):
+        intf = f"s1-eth{i+1}"
+        capture_and_plot(intf)
 
 plt.show()
