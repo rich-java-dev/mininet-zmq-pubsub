@@ -10,7 +10,7 @@ parser.add_argument("--sample_size", "--samples", default=50)
 
 args = parser.parse_args()
 intf = args.interface
-sample_size = args.sample_size
+sample_size = int(args.sample_size)
 net_size = int(args.net_size)
 
 
@@ -30,6 +30,13 @@ def capture_and_plot(intf):
 
         port = tcp.dstport
 
+        try:
+            port = int(port)
+            if port > 5600:
+                continue
+        except Exception:
+            continue
+
         src = ip.src
         dst = ip.dst
 
@@ -47,13 +54,19 @@ def capture_and_plot(intf):
         print(
             f' source: {src} dest: {dst} port: {port} time_lapse(RTT):{time_delta} flags:{flags}')
 
-    fig, axs = plt.subplots(len(packet_map))
+    map_len = len(packet_map)
+    fig, axs = plt.subplots(map_len)
     fig.suptitle('RTTs (round trip time) of Packets')
 
     i = 0
     for k, v in packet_map.items():
-        axs[i].plot(range(len(v)), v)
-        axs[i].set_title(f'(src/dest:port) - {k}')
+        if map_len > 1:
+            axs[i].plot(range(len(v)), v)
+            axs[i].set_title(f'(src/dest:port) - {k}')
+        else:
+            axs.plot(range(len(v)), v)
+            axs.set_title(f'(src/dest:port) - {k}')
+
         i = i+1
     plt.show()
 
