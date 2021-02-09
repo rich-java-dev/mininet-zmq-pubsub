@@ -40,7 +40,7 @@ for packet in capture.sniff_continuously(packet_count=500):
         f' source: {src} dest: {dst} port: {port} time_lapse(RTT):{time_delta} flags:{flags}')
 
 fig, axs = plt.subplots(len(packet_map))
-fig.suptitle('RTTs (round time time) of Packets')
+fig.suptitle('RTTs (round trip time) of Packets')
 
 i = 0
 for k, v in packet_map.items():
