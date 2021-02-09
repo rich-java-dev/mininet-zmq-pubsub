@@ -72,14 +72,14 @@ def subscriber(interface='', port=5556, topic='', net_size=0):
 
     print(f"Subscribing to '{conn_str}' w/ topic '{topic}'")
 
-    for intf in interface:
-        conn_str = f'tcp://{intf}:{port}'
-        print(f"connecting: {conn_str}")
-        socket.connect(conn_str)
-
     if(net_size > 0):
         for i in range(net_size):
-            conn_str = f'tcp://{intf}:{i}'
+            conn_str = f'tcp://10.0.0.{i}:{port}'
+            print(f"connecting: {conn_str}")
+            socket.connect(conn_str)
+    else:
+        for intf in interface:
+            conn_str = f'tcp://{intf}:{port}'
             print(f"connecting: {conn_str}")
             socket.connect(conn_str)
 

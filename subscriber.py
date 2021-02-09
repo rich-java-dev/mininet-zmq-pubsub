@@ -14,11 +14,11 @@ args = parser.parse_args()
 intf = args.interface
 port = args.port
 topic = args.topic
-net_size=args.net_size
+net_size = int(args.net_size)
 
 notify = subscriber(intf, port, topic, net_size)
 
 while True:
     msg = notify()
     print(msg)
-    time.sleep(0.001)
+    time.sleep(0.00001)

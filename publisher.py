@@ -29,3 +29,4 @@ while True:
     msg = f'{temperature} {relhumidity}'
 
     publish(zipcode, msg)
+    #time.sleep(0.00000001)
