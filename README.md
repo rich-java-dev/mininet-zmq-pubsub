@@ -8,9 +8,16 @@ Environment Dependencies:
 
 Sample Network Configuration:
 
+Automatic using main.py:
+- please configure main.py to point to the neccessary project directory
+- sudo python3 main.py
+Run the monitor (not on mininet host):
+- sudo python3 monitor.py --interface=any --sample_size=500
+
+
 Initializing the network:
 - sudo mn -c
-- sudo mn -x --topo=liner,10
+- sudo mn -x --topo=linear,10
 
 Proxy/Broker: (in_bound, out_bound)
 - host1: python3 broker.py --xin=5555 --xout=5556
@@ -24,4 +31,4 @@ Subscribers: (interface, port, topic)
 - host5: python3 subscriber.py --interface=10.0.0.1 --port=5556 --topic=90210
 
 Monitor: (interface ("s1-eth1",2,3...etc))
-- from localhost: sudo python3 monitor.py --interface="s1-eth1"
+- from localhost: sudo python3 monitor.py --interface=any --sample_size=500
