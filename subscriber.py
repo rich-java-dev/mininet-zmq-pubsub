@@ -21,4 +21,4 @@ notify = subscriber(intf, port, topic, net_size)
 while True:
     msg = notify()
     print(msg)
-    time.sleep(0.00001)
+    time.sleep(0.0000001)
