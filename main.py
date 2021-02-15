@@ -6,7 +6,6 @@ from random import randrange
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--broker_mode", default=True)
 parser.add_argument("--flood_mode", default=False)
 parser.add_argument("--xin", default="5555")  # for use with broker
 parser.add_argument("--xout", default="5556")  # for use with broker
@@ -28,28 +27,44 @@ x_intf = "10.0.0.1"  # proxy interface
 xin = args.xin  # proxy input (pub connection)
 xout = args.xout  # proxy output (sub connection)
 
-# broker.py <proxy_input_port> <proxy_output_port>
-prox_str = f'python3 {src_dir}/proxy.py &'
-print(prox_str)
-net.hosts[0].cmd(prox_str)
-
 # set up publishers
 pub_count = int(args.pub_count)
 topic_size = 1e5 / pub_count
 
-# pub.py <proxy_interface> <interface_port (proxy subscrib port)> <publisher_range_min> <publisher_range_max>
-for i in range(0, pub_count):
-    cmd_str = f'python3 {src_dir}/publisher.py --connect --interface={x_intf} --topic_range {int(i*topic_size)} {int((i+1)*topic_size)} &'
-    print(cmd_str)
-    net.hosts[i].cmd(cmd_str)
+flood_mode = args.flood_mode
 
+if flood_mode:
+    # pub.py <proxy_interface> <interface_port (proxy subscrib port)> <publisher_range_min> <publisher_range_max>
+    for i in range(0, pub_count):
+        cmd_str = f'python3 {src_dir}/publisher.py --bind --port={xin} --topic_range {int(i*topic_size)} {int((i+1)*topic_size)} &'
+        print(cmd_str)
+        net.hosts[i].cmd(cmd_str)
 
-# sub.py <proxy_interface> <interface_port (proxy publish port)> <topic>
-for i in range(pub_count + 1, host_count):
-    topic = randrange(1e4, 1e5)
-    cmd_str = f'python3 {src_dir}/subscriber.py --interface={x_intf} --port={xout} --topic={topic} >logs/h{i+1}.log &'
-    print(cmd_str)
-    net.hosts[i].cmd(cmd_str)
+    # sub.py <proxy_interface> <interface_port (proxy publish port)> <topic>
+    for i in range(pub_count, host_count):
+        topic = randrange(1e4, 1e5)
+        cmd_str = f'python3 {src_dir}/subscriber.py --net_size={host_count} --port={xin} --topic={topic} --label=h{i+1} >logs/h{i+1}.log &'
+        print(cmd_str)
+        net.hosts[i].cmd(cmd_str)
+
+else:  # with Proxy/Broker:
+    # broker.py <proxy_input_port> <proxy_output_port>
+    prox_str = f'python3 {src_dir}/proxy.py &'
+    print(prox_str)
+    net.hosts[0].cmd(prox_str)
+
+    # pub.py <proxy_interface> <interface_port (proxy subscrib port)> <publisher_range_min> <publisher_range_max>
+    for i in range(0, pub_count):
+        cmd_str = f'python3 {src_dir}/publisher.py --connect --interface={x_intf} --topic_range {int(i*topic_size)} {int((i+1)*topic_size)} &'
+        print(cmd_str)
+        net.hosts[i].cmd(cmd_str)
+
+    # sub.py <proxy_interface> <interface_port (proxy publish port)> <topic>
+    for i in range(pub_count + 1, host_count):
+        topic = randrange(1e4, 1e5)
+        cmd_str = f'python3 {src_dir}/subscriber.py --interface={x_intf} --port={xout} --topic={topic} --label=h{i+1} >logs/h{i+1}.log &'
+        print(cmd_str)
+        net.hosts[i].cmd(cmd_str)
 
 while(True):
     time.sleep(0.001)

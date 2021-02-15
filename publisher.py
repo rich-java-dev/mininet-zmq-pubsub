@@ -26,7 +26,8 @@ while True:
     zipcode = randrange(int(topic_min), int(topic_max))
     temperature = randrange(-80, 135)
     relhumidity = randrange(10, 60)
-    msg = f'{temperature} {relhumidity}'
+    ts = time.time()
+    msg = f'{temperature} {relhumidity} {ts}'
 
     publish(zipcode, msg)
     # time.sleep(0.00000001)
