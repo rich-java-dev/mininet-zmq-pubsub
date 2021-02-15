@@ -59,6 +59,20 @@ optional arguments:
 
 
 - main (driver for configuring network)
+usage: main.py [-h] [--flood_mode FLOOD_MODE] [--xin XIN] [--xout XOUT] [--topic TOPIC] [--net_size NET_SIZE] [--pub_count PUB_COUNT]
+               [--source_dir SOURCE_DIR]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --flood_mode FLOOD_MODE
+  --xin XIN
+  --xout XOUT
+  --topic TOPIC
+  --net_size NET_SIZE
+  --pub_count PUB_COUNT
+  --source_dir SOURCE_DIR, --src_dir SOURCE_DIR
+
+
 
 
 - zutils (api wrapper)
