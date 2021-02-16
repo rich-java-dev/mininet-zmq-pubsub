@@ -31,7 +31,8 @@ notify = subscriber(intf, port, topic, net_size) #mxm - returns topic temp humid
 delta_time_set = []
 while len(delta_time_set) < sample_size:
     msg = notify()
-    pub_id, temp, humid, sent_time = msg.split()
+    print(msg)
+    zipcode, pub_id, temp, humid, sent_time = msg.split()
     recv_time = time.time()
     #msg_time = float(msg.split(" ")[-1])
     delta = recv_time - float(sent_time)
