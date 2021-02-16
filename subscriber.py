@@ -31,16 +31,15 @@ notify = subscriber(intf, port, topic, net_size) #mxm - returns topic temp humid
 delta_time_set = []
 while len(delta_time_set) < sample_size:
     msg = notify()
-    print(msg)
     zipcode, pub_id, temp, humid, sent_time = msg.split()
     recv_time = time.time()
     #msg_time = float(msg.split(" ")[-1])
     delta = recv_time - float(sent_time)
     delta_time_set.append(delta)
     print(msg)
-
-#with open(f'{label}', 'a+') as session_data:
-#    session_data.write(f'{pub_id} {sub_id} {topic} {temp} {humid} {delta}\n')
+    with open(f'{label}', 'a+') as session_data:
+        session_data.write(f'{pub_id} {sub_id} {topic} {temp} {humid} {delta}\n')
+        
 print(f'testing - {pub_id} {sub_id} {topic} {temp} {humid} {delta}\n')                      
 # plot the time deltas
 fig, axs = plt.subplots(1)
