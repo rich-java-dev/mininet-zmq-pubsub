@@ -17,7 +17,6 @@ net_size = int(args.net_size)
 def capture_and_plot(intf):
     print(f"begining live capture on {intf}")
 
-    
     capture = pyshark.LiveCapture(interface=intf)
     packet_map = {}
     for packet in capture.sniff_continuously(packet_count=sample_size):
@@ -64,9 +63,13 @@ def capture_and_plot(intf):
         if map_len > 1:
             axs[i].plot(range(len(v)), v)
             axs[i].set_title(f'(src/dest:port) - {k}')
+            axs[i].set_ylabel("Delta Time (Pub - Sub)")
+            axs[i].set_xlabel("Number of Samples")
         else:
             axs.plot(range(len(v)), v)
             axs.set_title(f'(src/dest:port) - {k}')
+            axs.set_ylabel("Delta Time (Pub - Sub)")
+            axs.set_xlabel("Number of Samples")
 
         i = i+1
     plt.show()
