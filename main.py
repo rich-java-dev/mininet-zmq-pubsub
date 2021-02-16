@@ -30,7 +30,6 @@ net.start()
 
 src_dir = args.source_dir
 
-x_intf = "10.0.0.1"  # proxy interface
 xin = args.xin  # proxy input (pub connection)
 xout = args.xout  # proxy output (sub connection)
 
@@ -51,12 +50,13 @@ if flood_mode:
     # sub.py <proxy_interface> <interface_port (proxy publish port)> <topic>
     for i in range(pub_count, pub_count + sub_count):
         topic = randrange(1e4, 1e5)
-        cmd_str = f'python3 {src_dir}/subscriber.py --net_size={host_count} --port={xin} --topic={topic} --label={mLabel} --host=h{i} &'
+        cmd_str = f'python3 {src_dir}/subscriber.py --net_size={host_count} --port={xin} --topic={topic} --label={mLabel} --host=h{i+1} &'
         print(cmd_str)
         net.hosts[i].cmd(cmd_str)
 
 else:  # with Proxy/Broker:
     # broker.py <proxy_input_port> <proxy_output_port>
+    x_intf = "10.0.0.1"  # proxy interface
     prox_str = f'python3 {src_dir}/proxy.py &'
     print(prox_str)
     net.hosts[0].cmd(prox_str)
@@ -70,7 +70,7 @@ else:  # with Proxy/Broker:
     # sub.py <proxy_interface> <interface_port (proxy publish port)> <topic>
     for i in range(pub_count, pub_count + sub_count + 1):
         topic = randrange(1e4, 1e5)
-        cmd_str = f'python3 {src_dir}/subscriber.py --interface={x_intf} --port={xout} --topic={topic} --label={mLabel} --host=h{i} &'
+        cmd_str = f'python3 {src_dir}/subscriber.py --interface={x_intf} --port={xout} --topic={topic} --label={mLabel} --host=h{i+1} &'
         print(cmd_str)
         net.hosts[i].cmd(cmd_str)
 
