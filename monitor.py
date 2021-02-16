@@ -17,6 +17,7 @@ net_size = int(args.net_size)
 def capture_and_plot(intf):
     print(f"begining live capture on {intf}")
 
+    
     capture = pyshark.LiveCapture(interface=intf)
     packet_map = {}
     for packet in capture.sniff_continuously(packet_count=sample_size):
