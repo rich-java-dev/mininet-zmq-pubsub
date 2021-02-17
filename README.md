@@ -2,6 +2,8 @@
 ## Single Broker-Based Publish-Subscribe Using ZMQ and Mininet
 ### Richard White, Max Coursey 
 
+### https://youtu.be/KANdeYaW1_8
+
 PUB/SUB model supported by the ZeroMQ (ZMQ) middleware. Application maintains a broker, well known to the publishers and subscribers. This broker performs matchmaking. Data is disseminated from publishers to subscribers in a globally configurable way using one of the two approaches.
 1) Simulated "Flooding" - Publisher’s middleware layer directly send the data to the subscribers who are interested in the topic being published by this publisher. 
 
