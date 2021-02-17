@@ -20,11 +20,11 @@ The main.py method can take an arugment of the number of pub/subs and whether to
 - Matplotlib
 
 **What you need to install on Ubuntu:**
--- mininet - http://mininet.org/download/
--- python3/pip3  - sudo apt install python3-pip
---wireshark - sudo pip install wireshark (also included with mininet)
--- zmq - sudo -H pip3 install pyzmq
--- matplotlib - sudo apt-get install python3-matplotlib
+- mininet - http://mininet.org/download/
+- python3/pip3  - sudo apt install python3-pip
+- wireshark - sudo pip install wireshark (also included with mininet)
+- zmq - sudo -H pip3 install pyzmq
+- matplotlib - sudo apt-get install python3-matplotlib
 
 ## How to RUN 
 - Clone repo - https://github.com/rich-java-dev/cs6381-assignment1.git
