@@ -33,9 +33,10 @@ The main.py method can take an arugment of the number of pub/subs and whether to
 - Navigate to cs6381-assignment1 folder
 - Run the following commands from main Ubuntu CLI (not any mininet xterm window)
 --**replace x and y** with respective number of pub/subs to run 
+--update the source directory and cloned repo name in the main command (e.g. /home/user/cs6381-assignment1)
 
 For centralized:
-- >sudo python3 main.py --pub_count=x --sub_count=y
+- >sudo python3 main.py --pub_count=x --sub_count=y --source_dir=<your path>/cs6381-assignment1
 - >sudo python3 monitor.py --interface=any --sample_size=500 
 
 For flooding: 
