@@ -1,4 +1,4 @@
-# Distributed Systems Principles - Assignment 1
+# Distributed Systems - Message-Queue Tutorial
 ## Single Broker-Based Publish-Subscribe Using ZMQ and Mininet
 ### Richard White, Max Coursey 
 
